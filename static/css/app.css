@@ -98,7 +98,7 @@ body {
     inset: 0;
     background:
         linear-gradient(90deg, rgba(40, 19, 63, 0.98) 0%, rgba(62, 22, 89, 0.86) 43%, rgba(43, 94, 42, 0.78) 100%),
-        url("../images/ssc%20logo%20new.png") center right 8% / min(760px, 78vw) no-repeat;
+        url("../images/ssc-logo-new.png") center right 8% / min(760px, 78vw) no-repeat;
 }
 
 .landing-hero::after {
@@ -592,7 +592,7 @@ body {
     .landing-hero-bg {
         background:
             linear-gradient(180deg, rgba(40, 19, 63, 0.98) 0%, rgba(62, 22, 89, 0.9) 58%, rgba(43, 94, 42, 0.82) 100%),
-            url("../images/ssc%20logo%20new.png") center 88% / 480px no-repeat;
+            url("../images/ssc-logo-new.png") center 88% / 480px no-repeat;
     }
 
     .landing-hero-inner {
