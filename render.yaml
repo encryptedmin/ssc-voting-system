@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: ssc-voting-system
+    env: python
+    buildCommand: bash build.sh
+    startCommand: gunicorn config.wsgi:application
+    envVars:
+      - key: DEBUG
+        value: "False"
+      - key: ALLOWED_HOSTS
+        value: ssc-voting-system.onrender.com
+      - key: CSRF_TRUSTED_ORIGINS
+        value: https://ssc-voting-system.onrender.com
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: ssc-voting-db
+          property: connectionString
+      - key: DJANGO_SUPERUSER_USERNAME
+        sync: false
+      - key: DJANGO_SUPERUSER_EMAIL
+        sync: false
+      - key: DJANGO_SUPERUSER_PASSWORD
+        sync: false
+
+databases:
+  - name: ssc-voting-db
+    databaseName: ssc_voting_system
+    user: ssc_voting_system
