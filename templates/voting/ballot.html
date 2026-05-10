@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<section class="panel-card mb-4">
+
+    <div class="section-kicker">Official Ballot</div>
+
+    <h1 class="mb-3">{{ election.title }}</h1>
+
+    <p class="text-muted">{{ election.description }}</p>
+
+    <div class="countdown-panel">
+        <span>Voting Ends</span>
+        <strong>{{ election.end_time }}</strong>
+        <strong id="countdown" class="text-danger"></strong>
+    </div>
+
+</section>
+
+<form method="POST"
+      action="{% url 'submit_vote' election.id %}"
+      class="ballot-form">
+
+    {% csrf_token %}
+
+    {% for item in data %}
+
+        <section class="panel-card mb-4">
+
+            <h2 class="section-title">{{ item.position.name }}</h2>
+
+            <div class="candidate-grid">
+
+                {% for candidate in item.candidates %}
+
+                    <label class="candidate-choice">
+
+                        <input type="radio"
+                               name="{{ item.position.id }}"
+                               value="{{ candidate.id }}"
+                               required>
+
+                        <span class="candidate-choice-body">
+
+                            <img src="{{ candidate.photo.url }}"
+                                 class="candidate-img"
+                                 alt="{{ candidate.fullname }}">
+
+                            <span class="candidate-name">{{ candidate.fullname }}</span>
+
+                            <span class="candidate-platform">
+                                {{ candidate.platform }}
+                            </span>
+
+                            <span class="candidate-select">
+                                <i class="bi bi-check2-circle"></i>
+                                Select Candidate
+                            </span>
+
+                        </span>
+
+                    </label>
+
+                {% endfor %}
+
+            </div>
+
+        </section>
+
+    {% endfor %}
+
+    <div class="ballot-submit-bar">
+        <button type="submit"
+                class="btn btn-success btn-lg w-100">
+            <i class="bi bi-send-check"></i>
+            Submit Vote
+        </button>
+    </div>
+
+</form>
+
+<script>
+
+const endTime = new Date("{{ election.end_time|date:'Y-m-d H:i:s' }}").getTime();
+const countdownElement = document.getElementById("countdown");
+
+const timer = setInterval(function(){
+
+    const now = new Date().getTime();
+    const distance = endTime - now;
+
+    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((distance % (1000 * 60 * 60 * 24))
+    / (1000 * 60 * 60));
+    const minutes = Math.floor((distance % (1000 * 60 * 60))
+    / (1000 * 60));
+    const seconds = Math.floor((distance % (1000 * 60))
+    / 1000);
+
+    countdownElement.innerHTML =
+        "Ends in " +
+        days + "d " +
+        hours + "h " +
+        minutes + "m " +
+        seconds + "s";
+
+    if(distance < 0){
+        clearInterval(timer);
+        countdownElement.innerHTML = "Election Closed";
+    }
+
+}, 1000);
+
+</script>
+
+{% endblock %}

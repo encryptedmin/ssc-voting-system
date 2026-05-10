@@ -1,0 +1,407 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="admin-layout">
+
+    <aside class="admin-sidebar">
+
+        <h2>Admin Panel</h2>
+
+        <p>Election operations and voter registration control.</p>
+
+        <nav class="sidebar-nav">
+
+            <a href="#overview">
+                <i class="bi bi-speedometer2"></i>
+                Overview
+            </a>
+
+            <a href="#elections">
+                <i class="bi bi-calendar2-plus"></i>
+                Election CRUD
+            </a>
+
+            <a href="#voters">
+                <i class="bi bi-people"></i>
+                Manage Users
+            </a>
+
+            <a href="#live-count">
+                <i class="bi bi-bar-chart"></i>
+                Live Count
+            </a>
+
+            <a href="/admin/">
+                <i class="bi bi-tools"></i>
+                Django Admin
+            </a>
+
+        </nav>
+
+    </aside>
+
+    <div class="admin-content">
+
+        <section id="overview">
+
+            <div class="section-kicker">Control Center</div>
+
+            <h1 class="mb-4">SSC Admin Dashboard</h1>
+
+            <div class="metric-grid">
+
+                <div class="metric-card">
+                    <i class="bi bi-people-fill"></i>
+                    <div class="metric-value">{{ total_voters }}</div>
+                    <p class="metric-label">Total Voters</p>
+                </div>
+
+                <div class="metric-card">
+                    <i class="bi bi-person-check-fill"></i>
+                    <div class="metric-value">{{ approved_voters }}</div>
+                    <p class="metric-label">Approved Voters</p>
+                </div>
+
+                <div class="metric-card">
+                    <i class="bi bi-person-exclamation"></i>
+                    <div class="metric-value">{{ pending_voters }}</div>
+                    <p class="metric-label">Pending Registrations</p>
+                </div>
+
+                <div class="metric-card">
+                    <i class="bi bi-inboxes-fill"></i>
+                    <div class="metric-value">{{ total_votes }}</div>
+                    <p class="metric-label">Submitted Ballots</p>
+                </div>
+
+            </div>
+
+        </section>
+
+        <section class="panel-card chart-card">
+
+            <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-3">
+
+                <div>
+                    <div class="section-kicker">Election Statistics</div>
+                    <h2 class="section-title mb-0">Voter Participation</h2>
+                </div>
+
+                <span class="badge text-bg-light">
+                    {{ total_candidates }} candidates across {{ total_elections }} elections
+                </span>
+
+            </div>
+
+            {% if election_statistics %}
+
+                <div class="chart-canvas">
+                    <canvas id="participationChart"></canvas>
+                </div>
+
+            {% else %}
+
+                <div class="empty-state">No active election statistics available yet.</div>
+
+            {% endif %}
+
+        </section>
+
+        <section id="elections" class="panel-card">
+
+            <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
+
+                <div>
+                    <div class="section-kicker">Election CRUD</div>
+                    <h2 class="section-title mb-0">Create New Election</h2>
+                </div>
+
+            </div>
+
+            <form method="POST"
+                  action="{% url 'election_create' %}"
+                  class="row g-3 mb-4">
+
+                {% csrf_token %}
+
+                <div class="col-md-6">
+                    <label class="form-label" for="{{ election_form.title.id_for_label }}">Title</label>
+                    {{ election_form.title }}
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label" for="{{ election_form.start_time.id_for_label }}">Start Time</label>
+                    {{ election_form.start_time }}
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label" for="{{ election_form.end_time.id_for_label }}">End Time</label>
+                    {{ election_form.end_time }}
+                </div>
+
+                <div class="col-12">
+                    <label class="form-label" for="{{ election_form.description.id_for_label }}">Description</label>
+                    {{ election_form.description }}
+                </div>
+
+                <div class="col-md-6 d-flex align-items-center">
+                    <div class="form-check">
+                        {{ election_form.is_active }}
+                        <label class="form-check-label" for="{{ election_form.is_active.id_for_label }}">
+                            Active election
+                        </label>
+                    </div>
+                </div>
+
+                <div class="col-md-6 text-md-end">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i>
+                        Create Election
+                    </button>
+                </div>
+
+            </form>
+
+            <div class="table-responsive">
+
+                <table class="table align-middle">
+
+                    <thead>
+                    <tr>
+                        <th>Election</th>
+                        <th>Schedule</th>
+                        <th>Status</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+
+                    {% for election in elections %}
+
+                        <tr>
+                            <td>
+                                <strong>{{ election.title }}</strong>
+                                <div class="text-muted small">{{ election.description|default:'No description' }}</div>
+                            </td>
+                            <td>
+                                <div>{{ election.start_time }}</div>
+                                <div class="text-muted small">to {{ election.end_time }}</div>
+                            </td>
+                            <td>
+                                {% if election.is_active %}
+                                    <span class="badge text-bg-success">Active</span>
+                                {% else %}
+                                    <span class="badge text-bg-secondary">Inactive</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="action-row justify-content-end">
+                                    <a href="{% url 'election_update' election.id %}"
+                                       class="btn btn-outline-primary btn-sm">
+                                        <i class="bi bi-pencil-square"></i>
+                                        Edit
+                                    </a>
+
+                                    <form method="POST"
+                                          action="{% url 'election_delete' election.id %}">
+                                        {% csrf_token %}
+                                        <button type="submit"
+                                                class="btn btn-outline-danger btn-sm">
+                                            <i class="bi bi-trash"></i>
+                                            Delete
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+
+                    {% empty %}
+
+                        <tr>
+                            <td colspan="4">
+                                <div class="empty-state">No elections have been created yet.</div>
+                            </td>
+                        </tr>
+
+                    {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+        <section id="voters" class="panel-card">
+
+            <div class="section-kicker">Manage Users</div>
+            <h2 class="section-title">Registration Requests</h2>
+
+            <div class="table-responsive mb-4">
+
+                <table class="table align-middle">
+
+                    <thead>
+                    <tr>
+                        <th>Voter</th>
+                        <th>Student ID</th>
+                        <th>Course / Year</th>
+                        <th class="text-end">Decision</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+
+                    {% for voter in pending_voter_list %}
+
+                        <tr>
+                            <td>
+                                <strong>{{ voter.username }}</strong>
+                                <div class="text-muted small">{{ voter.email }}</div>
+                            </td>
+                            <td>{{ voter.student_id|default:'-' }}</td>
+                            <td>{{ voter.course|default:'-' }} / {{ voter.year_level|default:'-' }}</td>
+                            <td>
+                                <div class="action-row justify-content-end">
+                                    <form method="POST"
+                                          action="{% url 'voter_action' voter.id 'approve' %}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-success btn-sm">
+                                            <i class="bi bi-check2-circle"></i>
+                                            Approve
+                                        </button>
+                                    </form>
+
+                                    <form method="POST"
+                                          action="{% url 'voter_action' voter.id 'deny' %}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-outline-danger btn-sm">
+                                            <i class="bi bi-x-circle"></i>
+                                            Deny
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+
+                    {% empty %}
+
+                        <tr>
+                            <td colspan="4">
+                                <div class="empty-state">No pending voter registrations.</div>
+                            </td>
+                        </tr>
+
+                    {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            <h3 class="section-title">Approved Voters</h3>
+
+            <div class="table-responsive">
+
+                <table class="table align-middle">
+
+                    <thead>
+                    <tr>
+                        <th>Voter</th>
+                        <th>Student ID</th>
+                        <th>Course / Year</th>
+                        <th class="text-end">Action</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+
+                    {% for voter in approved_voter_list %}
+
+                        <tr>
+                            <td>
+                                <strong>{{ voter.username }}</strong>
+                                <div class="text-muted small">{{ voter.email }}</div>
+                            </td>
+                            <td>{{ voter.student_id|default:'-' }}</td>
+                            <td>{{ voter.course|default:'-' }} / {{ voter.year_level|default:'-' }}</td>
+                            <td>
+                                <div class="action-row justify-content-end">
+                                    <form method="POST"
+                                          action="{% url 'voter_action' voter.id 'delete' %}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-outline-danger btn-sm">
+                                            <i class="bi bi-trash"></i>
+                                            Delete
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+
+                    {% empty %}
+
+                        <tr>
+                            <td colspan="4">
+                                <div class="empty-state">No approved voters yet.</div>
+                            </td>
+                        </tr>
+
+                    {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+        <section id="live-count" class="panel-card">
+
+            <div class="section-kicker">Live Election Count</div>
+            <h2 class="section-title">Candidate Vote Totals</h2>
+
+            {% if live_election_counts %}
+
+                <div class="election-grid">
+
+                    {% for election in live_election_counts %}
+
+                        <div class="card election-card chart-card">
+                            <h3>{{ election.title }}</h3>
+                            <div class="chart-canvas">
+                                <canvas data-live-election-chart
+                                        data-election-id="{{ election.id }}"></canvas>
+                            </div>
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <div class="empty-state">No live vote data available yet.</div>
+
+            {% endif %}
+
+        </section>
+
+    </div>
+
+</div>
+
+{{ election_statistics|json_script:"election-statistics-data" }}
+{{ live_election_counts|json_script:"live-election-count-data" }}
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/dashboard_charts.js' %}"></script>
+{% endblock %}

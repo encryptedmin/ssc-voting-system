@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="admin-layout">
+
+    <aside class="admin-sidebar">
+
+        <h2>Admin Panel</h2>
+
+        <p>Election setup and schedule management.</p>
+
+        <nav class="sidebar-nav">
+            <a href="{% url 'admin_dashboard' %}#overview">
+                <i class="bi bi-speedometer2"></i>
+                Overview
+            </a>
+            <a href="{% url 'admin_dashboard' %}#elections">
+                <i class="bi bi-calendar2-plus"></i>
+                Election CRUD
+            </a>
+            <a href="{% url 'admin_dashboard' %}#voters">
+                <i class="bi bi-people"></i>
+                Manage Users
+            </a>
+            <a href="{% url 'admin_dashboard' %}#live-count">
+                <i class="bi bi-bar-chart"></i>
+                Live Count
+            </a>
+        </nav>
+
+    </aside>
+
+    <section class="panel-card">
+
+        <div class="section-kicker">Election CRUD</div>
+        <h1 class="mb-4">{{ page_title }}</h1>
+
+        <form method="POST" class="row g-3">
+
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+                <div class="col-12">
+                    <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+                </div>
+            {% endif %}
+
+            <div class="col-md-6">
+                <label class="form-label" for="{{ form.title.id_for_label }}">Title</label>
+                {{ form.title }}
+                {{ form.title.errors }}
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label" for="{{ form.start_time.id_for_label }}">Start Time</label>
+                {{ form.start_time }}
+                {{ form.start_time.errors }}
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label" for="{{ form.end_time.id_for_label }}">End Time</label>
+                {{ form.end_time }}
+                {{ form.end_time.errors }}
+            </div>
+
+            <div class="col-12">
+                <label class="form-label" for="{{ form.description.id_for_label }}">Description</label>
+                {{ form.description }}
+                {{ form.description.errors }}
+            </div>
+
+            <div class="col-12">
+                <div class="form-check">
+                    {{ form.is_active }}
+                    <label class="form-check-label" for="{{ form.is_active.id_for_label }}">
+                        Active election
+                    </label>
+                    {{ form.is_active.errors }}
+                </div>
+            </div>
+
+            <div class="col-12 action-row">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-check2-circle"></i>
+                    {{ submit_label }}
+                </button>
+
+                <a href="{% url 'admin_dashboard' %}#elections"
+                   class="btn btn-outline-secondary">
+                    Cancel
+                </a>
+            </div>
+
+        </form>
+
+    </section>
+
+</div>
+
+{% endblock %}

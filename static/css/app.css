@@ -1,0 +1,693 @@
+:root {
+    --page-bg: #f5f7fa;
+    --surface: #ffffff;
+    --surface-muted: #eef2f7;
+    --border: #d9e0ea;
+    --ink: #1d2633;
+    --muted: #667085;
+    --brand: #1255a4;
+    --brand-dark: #0f3f78;
+    --ssc-purple: #4a176f;
+    --ssc-gold: #f2bd2e;
+    --ssc-green: #2f7d32;
+    --success: #16794c;
+    --warning: #b7791f;
+    --danger: #b42318;
+    --shadow: 0 12px 30px rgba(16, 24, 40, 0.08);
+}
+
+body {
+    min-height: 100vh;
+    background: var(--page-bg);
+    color: var(--ink);
+}
+
+.navbar .container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.navbar {
+    background: var(--brand-dark);
+    box-shadow: 0 2px 12px rgba(15, 63, 120, 0.18);
+}
+
+.navbar-brand {
+    min-width: 0;
+    color: #ffffff !important;
+    font-weight: 700;
+    letter-spacing: 0;
+    white-space: normal;
+}
+
+.brand-logo {
+    border-radius: 6px;
+    object-fit: cover;
+    background: #ffffff;
+}
+
+.main-shell {
+    margin-top: 24px;
+}
+
+.site-alert {
+    transition: opacity 1.2s ease, transform 1.2s ease, max-height 1.2s ease, margin 1.2s ease, padding 1.2s ease;
+}
+
+.site-alert.alert-fading {
+    max-height: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(-8px);
+}
+
+.footer {
+    margin-top: 48px;
+    padding: 16px;
+    background: var(--brand-dark);
+    color: #ffffff;
+    text-align: center;
+}
+
+.landing-shell {
+    margin-top: 0;
+}
+
+.landing-shell .site-alert {
+    width: min(1120px, calc(100% - 28px));
+    margin: 16px auto 0;
+}
+
+.landing-hero {
+    position: relative;
+    min-height: calc(100vh - 83px);
+    overflow: hidden;
+    background: #28133f;
+    color: #ffffff;
+}
+
+.landing-hero-bg {
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(90deg, rgba(40, 19, 63, 0.98) 0%, rgba(62, 22, 89, 0.86) 43%, rgba(43, 94, 42, 0.78) 100%),
+        url("../images/ssc%20logo%20new.png") center right 8% / min(760px, 78vw) no-repeat;
+}
+
+.landing-hero::after {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 10px;
+    content: "";
+    background: linear-gradient(90deg, var(--ssc-gold), var(--ssc-purple), var(--ssc-green));
+}
+
+.landing-hero-inner {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    min-height: calc(100vh - 83px);
+    grid-template-columns: minmax(0, 1.1fr) minmax(260px, 0.8fr);
+    gap: 36px;
+    align-items: center;
+    padding-top: 56px;
+    padding-bottom: 72px;
+}
+
+.landing-copy {
+    max-width: 700px;
+}
+
+.landing-kicker {
+    display: inline-flex;
+    margin-bottom: 14px;
+    color: var(--ssc-gold);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0;
+}
+
+.landing-copy h1 {
+    margin-bottom: 18px;
+    font-size: 5rem;
+    font-weight: 900;
+    line-height: 0.96;
+}
+
+.landing-copy p {
+    max-width: 620px;
+    margin-bottom: 28px;
+    color: #edf2f7;
+    font-size: 1.16rem;
+    line-height: 1.7;
+}
+
+.landing-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.landing-actions .btn {
+    min-height: 52px;
+    display: inline-flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: center;
+}
+
+.landing-emblem {
+    display: flex;
+    justify-content: center;
+}
+
+.landing-emblem img {
+    width: min(380px, 74vw);
+    border-radius: 8px;
+    filter: drop-shadow(0 24px 42px rgba(0, 0, 0, 0.36));
+}
+
+.landing-info {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+    margin-top: -46px;
+    position: relative;
+    z-index: 2;
+}
+
+.landing-info-item {
+    padding: 22px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface);
+    box-shadow: var(--shadow);
+}
+
+.landing-info-item i {
+    color: var(--ssc-purple);
+    font-size: 1.7rem;
+}
+
+.landing-info-item h2 {
+    margin: 12px 0 8px;
+    font-size: 1.15rem;
+    font-weight: 800;
+}
+
+.landing-info-item p {
+    margin: 0;
+    color: var(--muted);
+}
+
+.card,
+.panel-card {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface);
+    box-shadow: var(--shadow);
+}
+
+.panel-card {
+    padding: 24px;
+}
+
+.section-title {
+    margin-bottom: 16px;
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.section-kicker {
+    margin-bottom: 4px;
+    color: var(--muted);
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0;
+}
+
+.metric-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.metric-card {
+    min-height: 124px;
+    padding: 20px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface);
+    box-shadow: var(--shadow);
+}
+
+.metric-card i {
+    color: var(--brand);
+    font-size: 1.35rem;
+}
+
+.metric-value {
+    margin: 10px 0 2px;
+    font-size: 2rem;
+    font-weight: 800;
+}
+
+.metric-label {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.92rem;
+}
+
+.admin-layout {
+    display: grid;
+    grid-template-columns: 260px minmax(0, 1fr);
+    gap: 24px;
+    align-items: start;
+}
+
+.admin-sidebar {
+    position: sticky;
+    top: 20px;
+    padding: 18px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: #102a43;
+    color: #ffffff;
+    box-shadow: var(--shadow);
+}
+
+.admin-sidebar h2 {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 800;
+}
+
+.admin-sidebar p {
+    margin: 4px 0 18px;
+    color: #cbd5e1;
+    font-size: 0.88rem;
+}
+
+.sidebar-nav {
+    display: grid;
+    gap: 8px;
+}
+
+.sidebar-nav a {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    padding: 10px 12px;
+    border-radius: 8px;
+    color: #e9f2ff;
+    text-decoration: none;
+}
+
+.sidebar-nav a:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+}
+
+.admin-content {
+    display: grid;
+    gap: 24px;
+}
+
+.table {
+    vertical-align: middle;
+}
+
+.table thead th {
+    color: var(--muted);
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0;
+}
+
+.action-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.chart-card {
+    min-height: 360px;
+}
+
+.chart-canvas {
+    min-height: 260px;
+}
+
+.auth-card {
+    padding: 28px;
+}
+
+.auth-card input,
+.auth-card select,
+.auth-card textarea {
+    width: 100%;
+    min-height: 44px;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+}
+
+.auth-card label {
+    margin-bottom: 6px;
+    font-weight: 700;
+}
+
+.auth-card .helptext {
+    display: block;
+    margin-top: 6px;
+    color: var(--muted);
+    font-size: 0.85rem;
+}
+
+.election-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.election-card {
+    padding: 22px;
+}
+
+.election-card h3 {
+    font-size: 1.25rem;
+    font-weight: 800;
+}
+
+.candidate-img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border: 4px solid var(--brand);
+    border-radius: 50%;
+}
+
+.candidate-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.candidate-choice {
+    display: block;
+    min-height: 100%;
+    cursor: pointer;
+}
+
+.candidate-choice input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.candidate-choice-body,
+.candidate-result {
+    display: flex;
+    min-height: 100%;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 18px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface);
+    text-align: center;
+    box-shadow: var(--shadow);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.candidate-choice:has(input:checked) .candidate-choice-body {
+    border-color: var(--success);
+    box-shadow: 0 0 0 3px rgba(22, 121, 76, 0.18), var(--shadow);
+}
+
+.candidate-choice:focus-within .candidate-choice-body {
+    outline: 3px solid rgba(18, 85, 164, 0.22);
+    outline-offset: 2px;
+}
+
+.candidate-name,
+.candidate-result h2,
+.candidate-result h3 {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 800;
+}
+
+.candidate-platform {
+    display: block;
+    color: var(--muted);
+    font-size: 0.92rem;
+}
+
+.candidate-select {
+    display: inline-flex;
+    gap: 6px;
+    align-items: center;
+    margin-top: auto;
+    color: var(--brand);
+    font-weight: 700;
+}
+
+.countdown-panel {
+    display: grid;
+    gap: 4px;
+    padding: 14px 16px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface-muted);
+}
+
+.countdown-panel span {
+    color: var(--muted);
+    font-size: 0.86rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0;
+}
+
+.ballot-submit-bar {
+    position: sticky;
+    bottom: 12px;
+    z-index: 10;
+    padding: 10px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.94);
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(10px);
+}
+
+.winner {
+    border: 3px solid #d6a600;
+    background: #fff8dc;
+}
+
+.status-badge {
+    font-size: 0.88rem;
+}
+
+.empty-state {
+    padding: 28px;
+    border: 1px dashed var(--border);
+    border-radius: 8px;
+    background: var(--surface);
+    color: var(--muted);
+    text-align: center;
+}
+
+.form-check-input {
+    cursor: pointer;
+}
+
+@media (max-width: 991.98px) {
+    .landing-hero-inner {
+        grid-template-columns: 1fr;
+        gap: 28px;
+        text-align: center;
+    }
+
+    .landing-copy h1 {
+        font-size: 3.6rem;
+    }
+
+    .landing-copy {
+        max-width: none;
+    }
+
+    .landing-copy p {
+        margin-right: auto;
+        margin-left: auto;
+    }
+
+    .landing-actions {
+        justify-content: center;
+    }
+
+    .landing-info {
+        grid-template-columns: 1fr;
+        margin-top: 18px;
+    }
+
+    .admin-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-sidebar {
+        position: static;
+    }
+
+    .metric-grid,
+    .election-grid,
+    .candidate-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 575.98px) {
+    h1 {
+        font-size: 1.65rem;
+    }
+
+    h2 {
+        font-size: 1.35rem;
+    }
+
+    .navbar-brand {
+        max-width: 100%;
+        font-size: 1rem;
+        line-height: 1.2;
+    }
+
+    .brand-logo {
+        width: 42px;
+        height: 42px;
+    }
+
+    .main-shell {
+        margin-top: 16px;
+        padding-right: 14px;
+        padding-left: 14px;
+    }
+
+    .landing-hero {
+        min-height: auto;
+    }
+
+    .landing-hero-bg {
+        background:
+            linear-gradient(180deg, rgba(40, 19, 63, 0.98) 0%, rgba(62, 22, 89, 0.9) 58%, rgba(43, 94, 42, 0.82) 100%),
+            url("../images/ssc%20logo%20new.png") center 88% / 480px no-repeat;
+    }
+
+    .landing-hero-inner {
+        min-height: auto;
+        padding-top: 42px;
+        padding-bottom: 56px;
+    }
+
+    .landing-copy h1 {
+        font-size: 2.35rem;
+        line-height: 1.02;
+    }
+
+    .landing-copy p {
+        font-size: 1rem;
+    }
+
+    .landing-actions .btn {
+        width: 100%;
+    }
+
+    .landing-emblem img {
+        width: min(260px, 74vw);
+    }
+
+    .landing-info {
+        padding-right: 14px;
+        padding-left: 14px;
+    }
+
+    .user-menu {
+        width: 100%;
+        margin-top: 12px;
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: center;
+    }
+
+    .metric-grid,
+    .election-grid,
+    .candidate-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .panel-card,
+    .auth-card {
+        padding: 18px;
+    }
+
+    .admin-sidebar {
+        padding: 14px;
+    }
+
+    .sidebar-nav {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .sidebar-nav a {
+        min-height: 48px;
+        padding: 10px;
+        font-size: 0.92rem;
+    }
+
+    .metric-card,
+    .election-card {
+        padding: 18px;
+    }
+
+    .candidate-choice-body,
+    .candidate-result {
+        padding: 16px;
+    }
+
+    .candidate-img {
+        width: 96px;
+        height: 96px;
+    }
+
+    .chart-card {
+        min-height: 300px;
+    }
+
+    .chart-canvas {
+        min-height: 240px;
+    }
+
+    .table-responsive {
+        border: 1px solid var(--border);
+        border-radius: 8px;
+    }
+
+    .ballot-submit-bar {
+        right: 12px;
+        bottom: 10px;
+        left: 12px;
+    }
+}

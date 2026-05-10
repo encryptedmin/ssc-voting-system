@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<section class="panel-card mb-4">
+
+    <div class="section-kicker">Live Results</div>
+
+    <h1 class="mb-3">{{ election.title }}</h1>
+
+    <p class="text-muted mb-0">{{ election.description }}</p>
+
+</section>
+
+{% for item in results %}
+
+    <section class="panel-card mb-4">
+
+        <h2 class="section-title">{{ item.position.name }}</h2>
+
+        <div class="candidate-grid mb-4">
+
+            {% for result in item.results %}
+
+                <article class="candidate-result {% if forloop.first %}winner{% endif %}">
+
+                    <img src="{{ result.candidate.photo.url }}"
+                         class="candidate-img"
+                         alt="{{ result.candidate.fullname }}">
+
+                    <h3>{{ result.candidate.fullname }}</h3>
+
+                    <strong>{{ result.votes }} Votes</strong>
+
+                    {% if forloop.first %}
+
+                        <span class="badge text-bg-warning">
+                            Leading Candidate
+                        </span>
+
+                    {% endif %}
+
+                </article>
+
+            {% endfor %}
+
+        </div>
+
+        <div class="chart-canvas">
+            <canvas id="chart{{ forloop.counter }}"></canvas>
+        </div>
+
+        <script>
+
+        const ctx{{ forloop.counter }} =
+        document.getElementById('chart{{ forloop.counter }}');
+
+        new Chart(ctx{{ forloop.counter }}, {
+
+            type: 'bar',
+
+            data: {
+
+                labels: [
+
+                    {% for result in item.results %}
+
+                        '{{ result.candidate.fullname|escapejs }}',
+
+                    {% endfor %}
+
+                ],
+
+                datasets: [{
+
+                    label: 'Votes',
+
+                    data: [
+
+                        {% for result in item.results %}
+
+                            {{ result.votes }},
+
+                        {% endfor %}
+
+                    ],
+
+                    backgroundColor: [
+                        '#1255a4',
+                        '#16794c',
+                        '#b42318',
+                        '#b7791f',
+                        '#7a3fb1',
+                        '#087f8c'
+                    ],
+
+                    borderWidth: 1
+
+                }]
+
+            },
+
+            options: {
+
+                responsive: true,
+                maintainAspectRatio: false,
+
+                plugins: {
+
+                    legend: {
+                        display: false
+                    }
+
+                },
+
+                scales: {
+
+                    y: {
+
+                        beginAtZero: true,
+
+                        ticks: {
+                            precision: 0
+                        }
+
+                    }
+
+                }
+
+            }
+
+        });
+
+        </script>
+
+    </section>
+
+{% endfor %}
+
+<script>
+
+setTimeout(function(){
+
+    location.reload();
+
+}, 10000);
+
+</script>
+
+{% endblock %}

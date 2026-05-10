@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="section-kicker">Voter Portal</div>
+<h1 class="mb-4">Available Elections</h1>
+
+{% if election_statistics %}
+
+    <section class="panel-card chart-card mb-4">
+
+        <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-3">
+            <div>
+                <div class="section-kicker">Election Statistics</div>
+                <h2 class="section-title mb-0">Voter Participation</h2>
+            </div>
+        </div>
+
+        <div class="chart-canvas">
+            <canvas id="participationChart"></canvas>
+        </div>
+
+    </section>
+
+{% endif %}
+
+<div class="election-grid mb-4">
+
+{% for item in election_data %}
+
+    <article class="card election-card">
+
+        <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
+
+            <h3 class="mb-0">{{ item.election.title }}</h3>
+
+            {% if item.status == 'Upcoming' %}
+                <span class="badge text-bg-warning status-badge">Upcoming</span>
+            {% elif item.status == 'Closed' %}
+                <span class="badge text-bg-danger status-badge">Closed</span>
+            {% else %}
+                <span class="badge text-bg-success status-badge">Ongoing</span>
+            {% endif %}
+
+        </div>
+
+        <p class="text-muted">
+            {{ item.election.description|default:'No description provided.' }}
+        </p>
+
+        <div class="border-top pt-3">
+            <p class="mb-1">
+                <strong>Start:</strong>
+                {{ item.election.start_time }}
+            </p>
+
+            <p class="mb-0">
+                <strong>End:</strong>
+                {{ item.election.end_time }}
+            </p>
+        </div>
+
+        {% if item.has_voted %}
+            <div class="alert alert-success mt-3 mb-0">
+                Your vote has been recorded for this election.
+            </div>
+        {% endif %}
+
+        <div class="d-grid gap-2 mt-3">
+
+            <a href="{% url 'ballot' item.election.id %}"
+               class="btn btn-primary {% if item.has_voted or item.status != 'Ongoing' %}disabled{% endif %}">
+                <i class="bi bi-ui-checks"></i>
+                Open Ballot
+            </a>
+
+            <a href="{% url 'results' item.election.id %}"
+               class="btn btn-outline-dark">
+                <i class="bi bi-bar-chart"></i>
+                View Results
+            </a>
+
+        </div>
+
+    </article>
+
+{% empty %}
+
+    <div class="empty-state">No elections available.</div>
+
+{% endfor %}
+
+</div>
+
+{% if live_election_counts %}
+
+    <section class="panel-card">
+
+        <div class="section-kicker">Live Election Count</div>
+        <h2 class="section-title">Candidate Vote Totals</h2>
+
+        <div class="election-grid">
+
+            {% for election in live_election_counts %}
+
+                <div class="card election-card chart-card">
+                    <h3>{{ election.title }}</h3>
+                    <div class="chart-canvas">
+                        <canvas data-live-election-chart
+                                data-election-id="{{ election.id }}"></canvas>
+                    </div>
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+{% endif %}
+
+{{ election_statistics|json_script:"election-statistics-data" }}
+{{ live_election_counts|json_script:"live-election-count-data" }}
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/dashboard_charts.js' %}"></script>
+{% endblock %}

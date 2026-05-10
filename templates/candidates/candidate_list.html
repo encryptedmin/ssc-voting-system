@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="section-kicker">Candidates</div>
+<h1 class="mb-4">SSC Candidates</h1>
+
+<div class="candidate-grid">
+
+    {% for candidate in candidates %}
+
+        <article class="candidate-result">
+
+            <img src="{{ candidate.photo.url }}"
+                 class="candidate-img"
+                 alt="{{ candidate.fullname }}">
+
+            <h2>{{ candidate.fullname }}</h2>
+
+            <strong>{{ candidate.position.name }}</strong>
+
+            <p class="text-muted mb-0">{{ candidate.platform }}</p>
+
+        </article>
+
+    {% empty %}
+
+        <div class="empty-state">No candidates available yet.</div>
+
+    {% endfor %}
+
+</div>
+
+{% endblock %}

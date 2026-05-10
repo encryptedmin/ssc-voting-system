@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block main_class %}landing-shell{% endblock %}
+
+{% block content %}
+
+<section class="landing-hero">
+
+    <div class="landing-hero-bg" aria-hidden="true"></div>
+
+    <div class="container landing-hero-inner">
+
+        <div class="landing-copy">
+
+            <span class="landing-kicker">Colegio de Kidapawan</span>
+
+            <h1>Welcome to the Colegio de Kidapawan E-Elections</h1>
+
+            <p>
+                A secure and accessible voting portal for Supreme Student Council elections,
+                built so every eligible student can cast a vote with clarity and confidence.
+            </p>
+
+            <div class="landing-actions">
+                <a href="{% url 'login' %}" class="btn btn-warning btn-lg">
+                    <i class="bi bi-box-arrow-in-right"></i>
+                    Login to Vote
+                </a>
+
+                <a href="{% url 'register' %}" class="btn btn-outline-light btn-lg">
+                    <i class="bi bi-person-plus"></i>
+                    Register as Voter
+                </a>
+            </div>
+
+        </div>
+
+        <div class="landing-emblem">
+            <img src="{% static 'images/ssc logo new.png' %}"
+                 alt="Supreme Student Council logo">
+        </div>
+
+    </div>
+
+</section>
+
+<section class="container landing-info">
+
+    <div class="landing-info-item">
+        <i class="bi bi-shield-check"></i>
+        <h2>Verified Access</h2>
+        <p>Voter accounts are reviewed before ballots become available.</p>
+    </div>
+
+    <div class="landing-info-item">
+        <i class="bi bi-phone"></i>
+        <h2>Mobile Ready</h2>
+        <p>The ballot is designed for students voting from mobile browsers.</p>
+    </div>
+
+    <div class="landing-info-item">
+        <i class="bi bi-bar-chart"></i>
+        <h2>Live Results</h2>
+        <p>Election counts and participation statistics update clearly for voters and admins.</p>
+    </div>
+
+</section>
+
+{% endblock %}
