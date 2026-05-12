@@ -5,6 +5,7 @@ from django.utils import timezone
 
 from elections.models import Election
 from candidates.models import Position, Candidate
+from accounts.models import CustomUser
 from .models import Vote
 
 
@@ -33,7 +34,7 @@ def ballot_view(request, election_id):
     ).exists()
 
     if already_voted:
-        messages.error(request, 'You already voted in this election.')
+        messages.error(request, 'You already voted.')
         return redirect('voter_dashboard')
 
     positions = Position.objects.filter(
@@ -111,6 +112,19 @@ def results_view(request, election_id):
         election=election
     )
 
+    total_voters = CustomUser.objects.filter(
+        role='VOTER',
+        is_approved=True
+    ).count()
+
+    voted_users = Vote.objects.filter(
+        election=election
+    ).values('voter').distinct().count()
+
+    non_voters = max(total_voters - voted_users, 0)
+
+    election_is_over = timezone.now() > election.end_time
+
     results = []
 
     for position in positions:
@@ -131,7 +145,6 @@ def results_view(request, election_id):
             candidate_results.append({
                 'candidate': candidate,
                 'votes': total_votes,
-                'chart_votes': total_votes,
             })
 
         candidate_results = sorted(
@@ -140,12 +153,32 @@ def results_view(request, election_id):
             reverse=True
         )
 
+        winner = candidate_results[0] if candidate_results else None
+
+        losing_votes = sum(
+            candidate['votes']
+            for candidate in candidate_results[1:]
+        )
+
+        total_position_votes = sum(
+            candidate['votes']
+            for candidate in candidate_results
+        )
+
         results.append({
             'position': position,
-            'results': candidate_results
+            'results': candidate_results,
+            'winner': winner,
+            'winning_votes': winner['votes'] if winner else 0,
+            'losing_votes': losing_votes,
+            'total_position_votes': total_position_votes,
         })
 
     return render(request, 'voting/results.html', {
         'results': results,
-        'election': election
+        'election': election,
+        'total_voters': total_voters,
+        'voted_users': voted_users,
+        'non_voters': non_voters,
+        'election_is_over': election_is_over,
     })

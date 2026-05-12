@@ -2,149 +2,566 @@
 
 {% block content %}
 
-<section class="panel-card mb-4">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <div class="section-kicker">Live Results</div>
+<div class="container py-4">
 
-    <h1 class="mb-3">{{ election.title }}</h1>
+    <div class="dashboard-header mb-4">
 
-    <p class="text-muted mb-0">{{ election.description }}</p>
+        <div>
+            <h1 class="dashboard-title">
+                {{ election.title }}
+            </h1>
 
-</section>
+            <p class="dashboard-subtitle">
+                Professional Election Results Dashboard
+            </p>
+        </div>
 
-{% for item in results %}
+        {% if election_is_over %}
+            <div class="status-badge ended">
+                Election Closed
+            </div>
+        {% else %}
+            <div class="status-badge live">
+                Live Election
+            </div>
+        {% endif %}
 
-    <section class="panel-card mb-4">
+    </div>
 
-        <h2 class="section-title">{{ item.position.name }}</h2>
 
-        <div class="candidate-grid mb-4">
+    <div class="stats-grid mb-5">
+
+        <div class="stats-card">
+            <h5>Total Registered Voters</h5>
+            <h2>{{ total_voters }}</h2>
+        </div>
+
+        <div class="stats-card">
+            <h5>Total Voted</h5>
+            <h2>{{ voted_users }}</h2>
+        </div>
+
+        <div class="stats-card abstain">
+            <h5>Did Not Vote</h5>
+            <h2>{{ non_voters }}</h2>
+        </div>
+
+    </div>
+
+
+    {% for item in results %}
+
+    <div class="result-card mb-5">
+
+        <div class="position-header">
+
+            <div>
+                <h2 class="position-title">
+                    {{ item.position.name }}
+                </h2>
+
+                <p class="vote-meta">
+                    {{ item.total_position_votes }} votes recorded
+                </p>
+            </div>
+
+            {% if item.winner %}
+            <div class="winner-chip">
+                Winner:
+                {{ item.winner.candidate.fullname }}
+                ({{ item.winner.votes }} votes)
+            </div>
+            {% endif %}
+
+        </div>
+
+
+        <div class="candidate-grid">
 
             {% for result in item.results %}
 
-                <article class="candidate-result {% if forloop.first %}winner{% endif %}">
+            <div class="candidate-card {% if forloop.first %}winner{% endif %}">
 
-                    <img src="{{ result.candidate.photo.url }}"
-                         class="candidate-img"
-                         alt="{{ result.candidate.fullname }}">
+                {% if result.candidate.photo %}
+                    <img
+                        src="{{ result.candidate.photo.url }}"
+                        class="candidate-photo"
+                        alt="{{ result.candidate.fullname }}"
+                    >
+                {% endif %}
 
-                    <h3>{{ result.candidate.fullname }}</h3>
+                <h4>
+                    {{ result.candidate.fullname }}
+                </h4>
 
-                    <strong>{{ result.votes }} Votes</strong>
+                <p class="party">
+                    {{ result.candidate.party_list|default:'Independent' }}
+                </p>
 
-                    {% if forloop.first %}
+                <div class="vote-total">
+                    {{ result.votes }} Votes
+                </div>
 
-                        <span class="badge text-bg-warning">
-                            Leading Candidate
-                        </span>
+                {% if forloop.first %}
+                    <div class="winner-label">
+                        🏆 Winner
+                    </div>
+                {% endif %}
 
-                    {% endif %}
-
-                </article>
+            </div>
 
             {% endfor %}
 
         </div>
 
-        <div class="chart-canvas">
-            <canvas id="chart{{ forloop.counter }}"></canvas>
+
+        <div class="charts-grid mt-4">
+
+            <div class="chart-card">
+                <h4 class="chart-title">
+                    Candidate Vote Distribution
+                </h4>
+
+                <canvas id="candidateChart{{ forloop.counter }}"></canvas>
+            </div>
+
+            <div class="chart-card">
+                <h4 class="chart-title">
+                    Winning vs Losing Side
+                </h4>
+
+                <canvas id="battleChart{{ forloop.counter }}"></canvas>
+            </div>
+
         </div>
 
-        <script>
+    </div>
 
-        const ctx{{ forloop.counter }} =
-        document.getElementById('chart{{ forloop.counter }}');
 
-        new Chart(ctx{{ forloop.counter }}, {
+    <script>
+
+        const candidateCtx{{ forloop.counter }} =
+            document.getElementById(
+                'candidateChart{{ forloop.counter }}'
+            );
+
+        new Chart(candidateCtx{{ forloop.counter }}, {
 
             type: 'bar',
 
             data: {
 
                 labels: [
-
                     {% for result in item.results %}
-
                         '{{ result.candidate.fullname|escapejs }}',
-
                     {% endfor %}
-
                 ],
 
                 datasets: [{
-
                     label: 'Votes',
 
                     data: [
-
                         {% for result in item.results %}
-
                             {{ result.votes }},
-
                         {% endfor %}
-
                     ],
 
                     backgroundColor: [
-                        '#1255a4',
-                        '#16794c',
-                        '#b42318',
-                        '#b7791f',
-                        '#7a3fb1',
-                        '#087f8c'
+                        '#2563eb',
+                        '#16a34a',
+                        '#dc2626',
+                        '#f59e0b',
+                        '#9333ea',
+                        '#0891b2'
                     ],
 
-                    borderWidth: 1
-
+                    borderRadius: 10
                 }]
-
             },
 
             options: {
-
                 responsive: true,
-                maintainAspectRatio: false,
 
                 plugins: {
-
                     legend: {
                         display: false
                     }
-
                 },
 
                 scales: {
-
                     y: {
-
                         beginAtZero: true,
-
                         ticks: {
                             precision: 0
                         }
-
                     }
-
                 }
-
             }
-
         });
 
-        </script>
 
-    </section>
+        const battleCtx{{ forloop.counter }} =
+            document.getElementById(
+                'battleChart{{ forloop.counter }}'
+            );
 
-{% endfor %}
+        new Chart(battleCtx{{ forloop.counter }}, {
+
+            type: 'bar',
+
+            data: {
+
+                labels: [
+                    'Winning Side',
+                    'Losing Side'
+                ],
+
+                datasets: [{
+                    label: 'Votes',
+
+                    data: [
+                        {{ item.winning_votes }},
+                        {{ item.losing_votes }}
+                    ],
+
+                    backgroundColor: [
+                        '#16a34a',
+                        '#dc2626'
+                    ],
+
+                    borderRadius: 10
+                }]
+            },
+
+            options: {
+                responsive: true,
+
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0
+                        }
+                    }
+                }
+            }
+        });
+
+    </script>
+
+    {% endfor %}
+
+</div>
+
+
+<style>
+
+body {
+    background: #f1f5f9;
+    font-size: 13px;
+}
+
+.container {
+    max-width: 1280px;
+}
+
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+}
+
+.dashboard-title {
+    font-size: 1.55rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 0.1rem;
+    line-height: 1.2;
+}
+
+.dashboard-subtitle {
+    color: #64748b;
+    font-size: 0.8rem;
+}
+
+.status-badge {
+    padding: 0.45rem 0.9rem;
+    border-radius: 999px;
+    font-weight: 700;
+    color: white;
+    font-size: 0.72rem;
+}
+
+.status-badge.live {
+    background: #16a34a;
+}
+
+.status-badge.ended {
+    background: #dc2626;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 0.7rem;
+}
+
+.stats-card {
+    background: white;
+    border-radius: 14px;
+    padding: 0.85rem 1rem;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+}
+
+.stats-card h5 {
+    color: #64748b;
+    margin-bottom: 0.2rem;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.stats-card h2 {
+    font-size: 1.45rem;
+    font-weight: 800;
+    margin: 0;
+}
+
+.stats-card.abstain {
+    background: linear-gradient(
+        135deg,
+        #ea580c,
+        #c2410c
+    );
+
+    color: white;
+}
+
+.result-card {
+    background: white;
+    border-radius: 16px;
+    padding: 1rem;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.05);
+}
+
+.position-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+}
+
+.position-title {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 0.1rem;
+}
+
+.vote-meta {
+    color: #64748b;
+    font-size: 0.74rem;
+}
+
+.winner-chip {
+    background: linear-gradient(
+        135deg,
+        #16a34a,
+        #15803d
+    );
+
+    color: white;
+    padding: 0.45rem 0.85rem;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 0.7rem;
+}
+
+.candidate-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 0.8rem;
+}
+
+.candidate-card {
+    background: #f8fafc;
+    border-radius: 14px;
+    padding: 0.85rem;
+    text-align: center;
+    transition: 0.18s ease;
+    border: 1px solid #e2e8f0;
+}
+
+.candidate-card:hover {
+    transform: translateY(-2px);
+}
+
+.candidate-card.winner {
+    border: 2px solid #16a34a;
+    background: #f0fdf4;
+}
+
+.candidate-photo {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 0.55rem;
+    border: 3px solid white;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.candidate-card h4 {
+    font-size: 0.84rem;
+    font-weight: 700;
+    margin-bottom: 0.2rem;
+    color: #0f172a;
+}
+
+.party {
+    color: #64748b;
+    margin-bottom: 0.4rem;
+    font-size: 0.7rem;
+}
+
+.vote-total {
+    font-size: 1rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 0.45rem;
+}
+
+.vote-percent {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #334155;
+    margin-bottom: 0.35rem;
+}
+
+.progress-wrapper {
+    width: 100%;
+    height: 7px;
+    background: #e2e8f0;
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(
+        90deg,
+        #2563eb,
+        #3b82f6
+    );
+
+    animation: growBar 1.2s ease;
+}
+
+.candidate-card.winner .progress-bar {
+    background: linear-gradient(
+        90deg,
+        #16a34a,
+        #22c55e
+    );
+}
+
+.winner-label {
+    margin-top: 0.5rem;
+    background: #facc15;
+    color: #111827;
+    padding: 0.3rem 0.7rem;
+    border-radius: 999px;
+    display: inline-block;
+    font-weight: 700;
+    font-size: 0.66rem;
+}
+
+.charts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 0.8rem;
+    margin-top: 0.8rem;
+}
+
+.chart-card {
+    background: #f8fafc;
+    border-radius: 14px;
+    padding: 0.85rem;
+    border: 1px solid #e2e8f0;
+}
+
+.chart-title {
+    margin-bottom: 0.6rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+canvas {
+    max-height: 210px;
+}
+
+@keyframes growBar {
+
+    from {
+        width: 0%;
+    }
+
+    to {
+        width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+
+    .dashboard-title {
+        font-size: 1.3rem;
+    }
+
+    .candidate-grid {
+        grid-template-columns: repeat(
+            auto-fit,
+            minmax(145px, 1fr)
+        );
+    }
+
+    .candidate-photo {
+        width: 56px;
+        height: 56px;
+    }
+
+    canvas {
+        max-height: 180px;
+    }
+}
+
+</style>
+
+
+{% if not election_is_over %}
 
 <script>
 
-setTimeout(function(){
-
+setTimeout(function () {
     location.reload();
-
 }, 10000);
 
 </script>
+
+{% endif %}
 
 {% endblock %}
